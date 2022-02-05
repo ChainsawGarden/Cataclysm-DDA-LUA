@@ -161,13 +161,13 @@ function Show_EntityScanner_MenuScanItem()
       for y = -off, off do
         local z = 0 --only current Z-level
         if math.abs(x) == off or math.abs(y) == off then
-          local point = tripoint(center.x + x, center.y + y, center.z + z)
-          local distance = game.trig_dist(point.x, point.y, center.x, center.y)
+          local point = tripoint(center:x() + x, center:y() + y, center:z() + z)
+          local distance = game.trig_dist(point:x(), point:y(), center:x(), center:y())
           if (distance <= ScanRadius) then
             if map:i_at(point):size() > 0 then
               local item_stack_iterator =  map:i_at(point):cppbegin()
               for _ = 1, map:i_at(point):size() do
-                AddEntry_EntityScanner_MenuScanItem(item_stack_iterator:elem(), point.x, point.y, point.z)
+                AddEntry_EntityScanner_MenuScanItem(item_stack_iterator:elem(), point:x(), point:y(), point:z())
                 item_stack_iterator:inc()
               end
             end
@@ -212,12 +212,12 @@ function Show_EntityScanner_MenuScanMonster()
       for y = -off, off do
         local z = 0 --only current Z-level
         if math.abs(x) == off or math.abs(y) == off then
-          local point = tripoint(center.x + x, center.y + y, center.z + z)
-          local distance = game.trig_dist(point.x, point.y, center.x, center.y)
+          local point = tripoint(center:x() + x, center:y() + y, center:z() + z)
+          local distance = game.trig_dist(point:x(), point:y(), center:x(), center:y())
           if (distance <= ScanRadius) then
             local monster = g:critter_at(point)
             if monster then
-              AddEntry_EntityScanner_MenuScanMonster(monster, point.x, point.y, point.z)
+              AddEntry_EntityScanner_MenuScanMonster(monster, point:x(), point:y(), point:z())
             end
           end
         end
@@ -343,9 +343,9 @@ end
 
 function EntityScanner_HighlightSingleEntity (choice, collection)
 
-  local x1 = player:pos().x
-  local y1 = player:pos().y
-  --local z1 = player:pos().z
+  local x1 = player:pos():x()
+  local y1 = player:pos():y()
+  --local z1 = player:pos():z()
 
   local x2 = collection[choice][1]
   local y2 = collection[choice][2]
@@ -521,8 +521,8 @@ function StartQuake()
     for y = -QuakeRange, QuakeRange do
       local z = 0 --only current Z-level
 
-      local point = tripoint (center.x + x, center.y + y, center.z + z)
-      local distance = game.trig_dist(point.x, point.y, center.x, center.y)
+      local point = tripoint (center:x() + x, center:y() + y, center:z() + z)
+      local distance = game.trig_dist(point:x(), point:y(), center:x(), center:y())
 
       if (distance <= QuakeRange) then
 
@@ -617,7 +617,7 @@ end
 
 function plot_field (x, y, fd)
 
-  map:add_field(tripoint(x,y,player:pos().z), fd, 1, TURNS(0))
+  map:add_field(tripoint(x,y,player:pos():z()), fd, 1, TURNS(0))
   
 end
 
@@ -666,9 +666,42 @@ end
 
 function get_directions(p1, p2)
 
-	return (p2.x-p1.x), (p2.y-p1.y)
+	return (p2:x()-p1:x()), (p2:y()-p1:y())
 
 end
+
+-- function flamethrower(item, active) --Adjacent direction
+
+-- 	local burst_cone_min_length = 0
+-- 	local burst_cone_max_length = 12
+-- 	local burst_cone_width = math.random(3, 12)
+
+-- 	--game.add_msg(tostring(burst_cone_width))
+
+-- 	local burst_field = "fd_fire"
+
+--     local center = player:pos()
+--     local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center:x(), center:y())
+--     local selected_point = tripoint(selected_x, selected_y, center:z())
+-- 	local selected_direction_x,selected_direction_y = get_directions(center, selected_point)
+
+-- 	local start_point = tripoint(selected_point:x() + selected_direction_x * burst_cone_min_length, selected_point:y() + selected_direction_y * burst_cone_min_length, selected_point:z())
+-- 	local end_point = tripoint(selected_point:x() + selected_direction_x * burst_cone_max_length, selected_point:y() + selected_direction_y * burst_cone_max_length, selected_point:z())
+
+-- 	for w = -burst_cone_width/2, burst_cone_width/2 do
+-- 		local temp_end_point1 = tripoint(end_point:x() + w, end_point:y() + w, end_point:z())
+-- 		local temp_end_point2 = tripoint(end_point:x() + w, end_point:y() + selected_direction_y * w, end_point:z())
+-- 		local temp_end_point3 = tripoint(end_point:x() + selected_direction_x * w, end_point:y() + w, end_point:z())
+-- 		local temp_end_point4 = tripoint(end_point:x() + selected_direction_x * w, end_point:y() + selected_direction_y * w, end_point:z())
+-- 		line_field(start_point:x(), start_point:y(), temp_end_point1:x(), temp_end_point1:y(), burst_field)
+-- 		line_field(start_point:x(), start_point:y(), temp_end_point2:x(), temp_end_point2:y(), burst_field)
+-- 		line_field(start_point:x(), start_point:y(), temp_end_point3:x(), temp_end_point3:y(), burst_field)
+-- 		line_field(start_point:x(), start_point:y(), temp_end_point4:x(), temp_end_point4:y(), burst_field)
+-- 	end
+
+-- 	--game.add_msg("<color_red>BURN!!!</color>")
+
+-- end
 
 function flamethrower(item, active) --Adjacent direction
 
@@ -681,27 +714,28 @@ function flamethrower(item, active) --Adjacent direction
 	local burst_field = "fd_fire"
 
     local center = player:pos()
-    local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center.x, center.y)
-    local selected_point = tripoint(selected_x, selected_y, center.z)
-	local selected_direction_x,selected_direction_y = get_directions(center, selected_point)
+    local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center:x(), center:y())
+    local selected_point = tripoint(selected_x, selected_y, center:z())
+	local selected_direction_x, selected_direction_y = get_directions(center, selected_point)
 
-	local start_point = tripoint(selected_point.x + selected_direction_x * burst_cone_min_length, selected_point.y + selected_direction_y * burst_cone_min_length, selected_point.z)
-	local end_point = tripoint(selected_point.x + selected_direction_x * burst_cone_max_length, selected_point.y + selected_direction_y * burst_cone_max_length, selected_point.z)
+	local start_point = tripoint(selected_point:x() + selected_direction_x * burst_cone_min_length, selected_point:y() + selected_direction_y * burst_cone_min_length, selected_point:z())
+	local end_point = tripoint(selected_point:x() + selected_direction_x * burst_cone_max_length, selected_point:y() + selected_direction_y * burst_cone_max_length, selected_point:z())
 
 	for w = -burst_cone_width/2, burst_cone_width/2 do
-		local temp_end_point1 = tripoint(end_point.x + w, end_point.y + w, end_point.z)
-		local temp_end_point2 = tripoint(end_point.x + w, end_point.y + selected_direction_y * w, end_point.z)
-		local temp_end_point3 = tripoint(end_point.x + selected_direction_x * w, end_point.y + w, end_point.z)
-		local temp_end_point4 = tripoint(end_point.x + selected_direction_x * w, end_point.y + selected_direction_y * w, end_point.z)
-		line_field(start_point.x, start_point.y, temp_end_point1.x, temp_end_point1.y, burst_field)
-		line_field(start_point.x, start_point.y, temp_end_point2.x, temp_end_point2.y, burst_field)
-		line_field(start_point.x, start_point.y, temp_end_point3.x, temp_end_point3.y, burst_field)
-		line_field(start_point.x, start_point.y, temp_end_point4.x, temp_end_point4.y, burst_field)
+		local temp_end_point1 = tripoint(end_point:x() + w, end_point:y() + w, end_point:z())
+		local temp_end_point2 = tripoint(end_point:x() + w, end_point:y() + selected_direction_y * w, end_point:z())
+		local temp_end_point3 = tripoint(end_point:x() + selected_direction_x * w, end_point:y() + w, end_point:z())
+		local temp_end_point4 = tripoint(end_point:x() + selected_direction_x * w, end_point:y() + selected_direction_y * w, end_point:z())
+		line_field(start_point:x(), start_point:y(), temp_end_point1:x(), temp_end_point1:y(), burst_field)
+		line_field(start_point:x(), start_point:y(), temp_end_point2:x(), temp_end_point2:y(), burst_field)
+		line_field(start_point:x(), start_point:y(), temp_end_point3:x(), temp_end_point3:y(), burst_field)
+		line_field(start_point:x(), start_point:y(), temp_end_point4:x(), temp_end_point4:y(), burst_field)
 	end
 
 	--game.add_msg("<color_red>BURN!!!</color>")
 
 end
+
 
 function on_preload()
 
