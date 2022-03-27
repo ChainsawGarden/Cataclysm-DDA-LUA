@@ -162,7 +162,7 @@ function Show_EntityScanner_MenuScanItem()
         local z = 0 --only current Z-level
         if math.abs(x) == off or math.abs(y) == off then
           local point = tripoint(center.x + x, center.y + y, center.z + z)
-          local distance = game.trig_dist(point.x, point.y, center.x, center.y)
+          local distance = game.trig_dist(point, center)
           if (distance <= ScanRadius) then
             if map:i_at(point):size() > 0 then -- i_at rets map_stack
               local item_stack_iterator =  map:i_at(point):cppbegin() -- let's see how cppbegin plays out.
@@ -213,7 +213,7 @@ function Show_EntityScanner_MenuScanMonster()
         local z = 0 --only current Z-level
         if math.abs(x) == off or math.abs(y) == off then
           local point = tripoint(center.x + x, center.y + y, center.z + z)
-          -- local distance = game.trig_dist(point.x, point.y, center.x, center.y) -- old
+          -- local distance = game.trig_dist(point, center) -- old
           local distance = game.trig_dist(point, center) -- trig_dist takes 2 point objs
           if (distance <= ScanRadius) then
             local monster = g:critter_at(point) -- monster is a tripoint
@@ -306,7 +306,7 @@ function Edit_EntityScanner_Option(k)
   local v = tostring(EntityScanner_Options[k][0])
   --local d = tostring(EntityScanner_Options[k][1])
 
-  EntityScanner_Options[k][0] = game.string_input_popup ("New "..k.." value is:", GetValue_EntityScannerOptions("GUIFieldLength", true), "Old "..k.." value is: "..v.."")
+  EntityScanner_Options[k][0] = game.string_input_popup("New "..k.." value is:", GetValue_EntityScannerOptions("GUIFieldLength", true), "Old "..k.." value is: "..v.."")
 
   Save_EntityScanner_Options()
   Show_EntityScanner_MenuOptions()
@@ -318,13 +318,10 @@ function AddEntry_EntityScanner_MenuScanItem(entity, x, y, z)
   local item = entity
 
   if (string.match(item:display_name(), GetValue_EntityScannerOptions("SearchMask")) ~= nil) then
-
     EntityScanner_MenuScanItemEntries [#EntityScanner_MenuScanItemEntries+1] = { [0] = item:display_name(), [1] = x, [2] = y, [3] = z }
     local menu_entry = string.format("Item: %s [W:<color_white>%d</color>, V:<color_white>%d</color>] at [X:<color_white>%d</color>, Y:<color_white>%d</color>, Z:<color_white>%d</color>]", item:display_name(), item.type.weight:value(), item.type.volume:value(), x, y, z)
     EntityScanner_MenuScanItem:addentry(menu_entry)
-
   end
-
 end
 
 function AddEntry_EntityScanner_MenuScanMonster(entity, x, y, z)
@@ -332,14 +329,10 @@ function AddEntry_EntityScanner_MenuScanMonster(entity, x, y, z)
   local monster = entity
 
   if (string.match(monster:disp_name(), GetValue_EntityScannerOptions("SearchMask")) ~= nil) then
-
     EntityScanner_MenuScanMonsterEntries [#EntityScanner_MenuScanMonsterEntries+1] = { [0] = monster:disp_name(), [1] = x, [2] = y, [3] = z }
-
     local menu_entry = string.format("Monster: %s at [X:<color_white>%d</color>, Y:<color_white>%d</color>, Z:<color_white>%d</color>]", monster:disp_name(), x, y, z)
     EntityScanner_MenuScanMonster:addentry(menu_entry)
-
   end
-
 end
 
 function EntityScanner_HighlightSingleEntity (choice, collection)
@@ -503,7 +496,7 @@ function Edit_EarthquakeGenerator_Option(k)
   local v = tostring(EarthquakeGenerator_Options[k][0])
   --local d = tostring(EarthquakeGenerator_Options[k][1])
 
-  EarthquakeGenerator_Options[k][0] = game.string_input_popup ("New "..k.." value is:", GetValue_EarthquakeGeneratorOptions("GUIFieldLength", true), "Old "..k.." value is: "..v.."")
+  EarthquakeGenerator_Options[k][0] = game.string_input_popup("New "..k.." value is:", GetValue_EarthquakeGeneratorOptions("GUIFieldLength", true), "Old "..k.." value is: "..v.."")
 
   Save_EarthquakeGenerator_Options()
   Show_EarthquakeGenerator_MenuOptions()
@@ -522,8 +515,8 @@ function StartQuake()
     for y = -QuakeRange, QuakeRange do
       local z = 0 --only current Z-level
 
-      local point = tripoint (center.x + x, center.y + y, center.z + z)
-      local distance = game.trig_dist(point.x, point.y, center.x, center.y)
+      local point = tripoint(center.x + x, center.y + y, center.z + z)
+      local distance = game.trig_dist(point, center)
 
       if (distance <= QuakeRange) then
 
@@ -715,7 +708,7 @@ function flamethrower(item, active) --Adjacent direction
 	local burst_field = "fd_fire"
 
     local center = player:pos()
-    local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center.x, center.y)
+    local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center.x, center.y) -- CBTT: It seems like some fns aren't in classdefs (`game` obj) and will probably work anyway. If there are errors, come back to these.
     local selected_point = tripoint(selected_x, selected_y, center.z)
 	local selected_direction_x, selected_direction_y = get_directions(center, selected_point)
 
