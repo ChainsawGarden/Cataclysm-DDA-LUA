@@ -89,7 +89,7 @@ function MapGen.RandomGraffitiString ()
     "Beware of Zeds",
     "Hello, Kitty!",
     "* unreadable symbols *",
-    "<color_ltred>PRAY!</color>",
+    "<color_red>PRAY!</color>",
     "<color_red>PRAY AND SPRAY!</color>"
   }
 
