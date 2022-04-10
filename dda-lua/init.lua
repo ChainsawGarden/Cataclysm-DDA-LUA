@@ -1,7 +1,7 @@
 --[[ DEBUG ]]--
 
 DEBUG_ENABLED = false
-SHOW_INTRO_MESSAGE = false
+SHOW_INTRO_MESSAGE = true
 
 --[[ Unnamed requirements ]]--
 
