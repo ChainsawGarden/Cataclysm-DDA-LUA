@@ -70,9 +70,9 @@ function Create_EntityScanner_MenuOptions()
   EntityScanner_MenuOptions = game.create_uimenu()
   EntityScanner_MenuOptions.title = EntityScanner_ToolName.." : OPTIONS"
   EntityScanner_MenuOptions:addentry("Back to main menu")
-  EntityScanner_MenuOptions:addentry("<color_ltred>Reset all options to default</color>")
+  EntityScanner_MenuOptions:addentry("<color_red>Reset all options to default</color>")
   for k,v in spairs_reverse(EntityScanner_Options) do
-    EntityScanner_MenuOptions:addentry("Change option: <color_green>"..k.."</color> = <color_ltgreen>"..v[0].."</color>")
+    EntityScanner_MenuOptions:addentry("Change option: <color_green>"..k.."</color> = <color_green>"..v[0].."</color>")
     EntityScanner_MenuOptionsEntries [#EntityScanner_MenuOptionsEntries+1] = k
   end
 
@@ -88,7 +88,7 @@ function Create_EntityScanner_MenuScanItem()
   EntityScanner_MenuScanItem = game.create_uimenu()
   EntityScanner_MenuScanItem.title = EntityScanner_ToolName.." : SCAN MENU - ITEM MODE"
   EntityScanner_MenuScanItem:addentry("Back to main menu")
-  EntityScanner_MenuScanItem:addentry("<color_ltgreen>Highlight all items</color>")
+  EntityScanner_MenuScanItem:addentry("<color_green>Highlight all items</color>")
 
 end
 
@@ -102,7 +102,7 @@ function Create_EntityScanner_MenuScanMonster()
   EntityScanner_MenuScanMonster = game.create_uimenu()
   EntityScanner_MenuScanMonster.title = EntityScanner_ToolName.." : SCAN MENU - MONSTER MODE"
   EntityScanner_MenuScanMonster:addentry("Back to main menu")
-  EntityScanner_MenuScanMonster:addentry("<color_ltgreen>Highlight all monsters</color>")
+  EntityScanner_MenuScanMonster:addentry("<color_green>Highlight all monsters</color>")
 
 end
 
@@ -154,7 +154,7 @@ function Show_EntityScanner_MenuScanItem()
 
   local ScanRadius = GetValue_EntityScannerOptions("ScanRadius", true)
 
-  local center = player:pos() -- returns a tripoint
+  local center = player.pos() -- returns a tripoint
 
   for off = 1, ScanRadius do
     for x = -off, off do
@@ -205,7 +205,7 @@ function Show_EntityScanner_MenuScanMonster()
 
   local ScanRadius = GetValue_EntityScannerOptions("ScanRadius", true)
 
-  local center = player:pos()
+  local center = player.pos()
 
   for off = 1, ScanRadius do
     for x = -off, off do
@@ -337,9 +337,9 @@ end
 
 function EntityScanner_HighlightSingleEntity (choice, collection)
 
-  local x1 = player:pos().x
-  local y1 = player:pos().y
-  --local z1 = player:pos().z
+  local x1 = player.pos().x
+  local y1 = player.pos().y
+  --local z1 = player.pos().z
 
   local x2 = collection[choice][1]
   local y2 = collection[choice][2]
@@ -359,7 +359,7 @@ function EntityScanner_HighlightAllEntities(collection)
       EntityScanner_HighlightSingleEntity(i, collection)
     end
   else
-    display.message ("<color_ltred>Nothing to highlight!</color>")
+    display.message ("<color_red>Nothing to highlight!</color>")
   end
 
 end
@@ -390,9 +390,9 @@ function Create_EarthquakeGenerator_MenuOptions()
   EarthquakeGenerator_MenuOptions = game.create_uimenu()
   EarthquakeGenerator_MenuOptions.title = EarthquakeGenerator_ToolName.." : OPTIONS"
   EarthquakeGenerator_MenuOptions:addentry("Back to main menu")
-  EarthquakeGenerator_MenuOptions:addentry("<color_ltred>Reset all options to default</color>")
+  EarthquakeGenerator_MenuOptions:addentry("<color_red>Reset all options to default</color>")
   for k,v in spairs_reverse(EarthquakeGenerator_Options) do
-    EarthquakeGenerator_MenuOptions:addentry("Change option: <color_green>"..k.."</color> = <color_ltgreen>"..v[0].."</color>")
+    EarthquakeGenerator_MenuOptions:addentry("Change option: <color_green>"..k.."</color> = <color_green>"..v[0].."</color>")
     EarthquakeGenerator_MenuOptionsEntries [#EarthquakeGenerator_MenuOptionsEntries+1] = k
   end
 
@@ -509,7 +509,7 @@ function StartQuake()
 
   local QuakeRange = GetValue_EarthquakeGeneratorOptions ("QuakeRange", true)
 
-  local center = player:pos()
+  local center = player.pos()
 
   for x = -QuakeRange, QuakeRange do
     for y = -QuakeRange, QuakeRange do
@@ -611,7 +611,7 @@ end
 
 function plot_field (x, y, fd)
 
-  map:add_field(tripoint(x,y,player:pos().z), fd, 1, TURNS(0))
+  map:add_field(tripoint(x,y,player.pos().z), fd, 1, TURNS(0))
   
 end
 
@@ -674,7 +674,7 @@ end
 
 -- 	local burst_field = "fd_fire"
 
---     local center = player:pos()
+--     local center = player.pos()
 --     local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center.x, center.y)
 --     local selected_point = tripoint(selected_x, selected_y, center.z)
 -- 	local selected_direction_x,selected_direction_y = get_directions(center, selected_point)
@@ -698,7 +698,7 @@ end
 -- end
 
 function flamethrower(item, active) --Adjacent direction
-
+  game.add_msg("<color_red>Destruction awaits.</color>")
 	local burst_cone_min_length = 0
 	local burst_cone_max_length = 12
 	local burst_cone_width = math.random(3, 12)
@@ -707,9 +707,9 @@ function flamethrower(item, active) --Adjacent direction
 
 	local burst_field = "fd_fire"
 
-    local center = player:pos()
-    local selected_x, selected_y = game.choose_adjacent("Select direction to <color_red>burn</color>", center.x, center.y) -- CBTT: It seems like some fns aren't in classdefs (`game` obj) and will probably work anyway. If there are errors, come back to these.
-    local selected_point = tripoint(selected_x, selected_y, center.z)
+  local center = player.pos()
+  local selected_x, selected_y = game.choose_adjacent("Tell the flamer where to destroy. Let the burning radiation wreak havoc in the chosen direction.", center.x, center.y)
+  local selected_point = tripoint(selected_x, selected_y, center.z)
 	local selected_direction_x, selected_direction_y = get_directions(center, selected_point)
 
 	local start_point = tripoint(selected_point.x + selected_direction_x * burst_cone_min_length, selected_point.y + selected_direction_y * burst_cone_min_length, selected_point.z)
